@@ -31,6 +31,10 @@ Check a web page contents for specific search terms. Built on [check_curl2](http
     -Px Set proxy to use
     -PxPort proxy port
     -PxAuth User name and password to use for proxy authentication
+	
+ 	--tlsv1.2 | --tls12  Force TLS 1.2
+  	--cacert <file>      Path to a PEM CA file (to verify server)
+  	--capath <dir>       Path to a directory of PEM CA files (to verify server)
 
 ### Examples:
 ```check_curl -U http://test.example.net```
@@ -40,3 +44,6 @@ Check a web page contents for specific search terms. Built on [check_curl2](http
 ```check_curl -U http://test.example.net:8888/info -a "USER:PASSWORD" -G "<status>0</status>" -Gn 5```
 
 ```check_curl -Px 'testproxy.net' -PxPort '8080' -PxAuth 'PROXY_USER:PROXY_PASSWORD' -U http://test.example.net```
+
+```check_curl -U https://test.example.net:8443/info --tlsv1.2 --cacert /etc/ssl/certs/company-ca.pem```
+
