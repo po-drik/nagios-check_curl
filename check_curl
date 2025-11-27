@@ -36,7 +36,7 @@ $NGrep        = [];
 
 // Optional limits / counters
 $grepNumber   = null;
-$Tc = $Tw = $Sbc = $Sbw = $Soc = $Sow = null;
+$Tc = $Tw = $Sw = $Sc = $Sbc = $Sbw = $Soc = $Sow = null;
 $tag = null;
 $String1 = $String2 = null;
 
@@ -388,32 +388,32 @@ if ((int)$reqInfo['http_code'] !== (int)$httpCode) {
 
 if (isset($Sbw) && ($Size < $Sbw)) {
     $Status = max($Status, 1);
-    $message .= " Page size {$Size}B below warning limit {$Sbw}B |";
+    $message .= " Page size {$Size}B below warning limit {$Sbw}B,";
 } elseif (isset($Sbc) && ($Size < $Sbc)) {
     $Status = 2;
-    $message .= " Page size {$Size}B below critical limit {$Sbc}B |";
+    $message .= " Page size {$Size}B below critical limit {$Sbc}B,";
 } elseif (isset($Sbc) || isset($Sbw)) {
-    $message .= " Page size {$Size}B is within limits |";
+    $message .= " Page size {$Size}B is within limits,";
 }
 
 if (isset($Sow) && ($Size > $Sow)) {
     $Status = max($Status, 1);
-    $message .= " Page size {$Size}B over warning limit {$Sow}B |";
+    $message .= " Page size {$Size}B over warning limit {$Sow}B,";
 } elseif (isset($Soc) && ($Size > $Soc)) {
     $Status = 2;
-    $message .= " Page size {$Size}B over critical limit {$Soc}B |";
+    $message .= " Page size {$Size}B over critical limit {$Soc}B,";
 } elseif (isset($Soc) || isset($Sow)) {
-    $message .= " Page size {$Size}B is within limits |";
+    $message .= " Page size {$Size}B is within limits,";
 }
 
 if (isset($Tw) && ($Time > $Tw)) {
     $Status = max($Status, 1);
-    $message .= " Download time {$Time}s exceeded warning limit {$Tw}s |";
+    $message .= " Download time {$Time}s exceeded warning limit {$Tw}s,";
 } elseif (isset($Tc) && ($Time > $Tc)) {
     $Status = 2;
-    $message .= " Download time {$Time}s exceeded critical limit {$Tc}s |";
+    $message .= " Download time {$Time}s exceeded critical limit {$Tc}s,";
 } elseif (isset($Tc) || isset($Tw)) {
-    $message .= " Download time {$Time}s is within limits |";
+    $message .= " Download time {$Time}s is within limits,";
 }
 
 // Positive searches (-G)
@@ -425,7 +425,7 @@ if (!empty($Grep)) {
             if (strpos($Buff, $g) === false) {
                 $Status = 2;
                 $notFound = true;
-                $message .= " String {$g} not found";
+                $message .= " String \"{$g}\" not found";
                 break;
             } else {
                 $foundMessage .= $g . ', ';
@@ -446,7 +446,7 @@ if (!empty($Grep)) {
             $message .= " Found {$grepNumber} occurrences of '{$Grep[0]}'";
         }
     }
-    $message .= ' |';
+    $message .= '|';
 }
 
 // Negative searches (-NG)
@@ -457,7 +457,7 @@ if (!empty($NGrep)) {
         if (strpos($Buff, $ng) !== false) {
             $Status = 2;
             $foundAny = true;
-            $message .= " String {$ng} was found";
+            $message .= " String \"{$ng}\" was found";
             break;
         } else {
             $foundMessage .= $ng . ', ';
@@ -522,7 +522,10 @@ switch ($Status) {
     default: $message = 'OK - '       . $message; $Status = 0; break;
 }
 
-if ($IncludePerf) $message .= " |time={$Time} size={$Size}\n";
+if (isset($Sbw, $Sow)) { $Sw = "{$Sbw}:{$Sow}"; }
+if (isset($Sbc, $Soc)) { $Sc = "{$Sbc}:{$Soc}"; }
+
+if ($IncludePerf) $message .= " time={$Time};{$Tw};{$Tc} size={$Size};{$Sw};{$Sc}\n";
 
 echo $message;
 
